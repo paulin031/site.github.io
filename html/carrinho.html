@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho de Compras</title>
+    <style>
+        /* Estilos para o layout avançado */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        #products {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .product {
+            display: inline-block;
+            margin: 20px;
+            text-align: left;
+            width: 300px;
+            border: 1px solid #ddd;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 5px;
+            padding: 10px
+        }
+        .product img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        #cart {
+            width: 300px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 30px;
+        }
+        button {
+            padding: 5px 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Produtos Disponíveis</h1>
+    <div id="products">
+        <div class="product">
+            <h3>Frutas Frescas</h3>
+            <img src="https://correiodoscampos.com.br/wp-content/uploads/2019/10/crecen-exportaciones-frutas-frescas-chilenas-696x380.jpg">
+            <p>R$ 100</p>
+            <button onclick="addToCart('Frutas', 100)">Adicionar ao Carrinho</button>
+        </div>
+        
+        <div class="product">
+            <h3>Verduras Frescas</h3>
+            <img src="https://img.freepik.com/fotos-gratis/vista-frontal-vegetal_140725-103355.jpg?size=626&ext=jpg&ga=GA1.1.1413502914.1696982400&semt=ais">
+            <p>R$ 150</p>
+            <button onclick="addToCart('Verduras', 150)">Adicionar ao Carrinho</button>
+        </div>
+        
+        <div class="product">
+            <h3>Legumes Frescos</h3>
+            <img src="https://img.freepik.com/fotos-premium/varios-legumes-frescos_23-2147681454.jpg">
+            <p>R$ 150</p>
+            <button onclick="addToCart('Legumes', 150)">Adicionar ao Carrinho</button>
+        </div>
+
+        <div class="product">
+            <h3>Ervas Frescas</h3>
+            <img src="https://static.itdg.com.br/images/auto-auto/5838f34efbd4a04326347b860d4e5a51/shutterstock-1150903832.jpg">
+            <p>R$ 150</p>
+            <button onclick="addToCart('Ervas', 150)">Adicionar ao Carrinho</button>
+        </div>
+        <div class="product">
+            <h3>Produtos secos</h3>
+            <img src="https://static.vecteezy.com/ti/fotos-gratis/p2/11565541-alimentos-secos-colheita-e-proteina-do-conceito-de-planta-conjunto-de-pequenos-sacos-de-juta-cheios-de-legumes-trigo-sarraceno-nozes-figueira-grao-de-bico-muleberry-e-outros-foto.JPG">
+            <p>R$ 150</p>
+            <button onclick="addToCart('Produtos secos', 150)">Adicionar ao Carrinho</button>
+        </div>
+        
+        <div class="product">
+            <h3>Produto local</h3>
+            <img src="https://dclogisticsbrasil.com/wp-content/uploads/2019/02/vigiagro-mudan%C3%A7as-na-exporta%C3%A7%C3%A3o-37xcyiyhcv1z569v9hdo22.jpg">
+            <p>R$ 150</p>
+            <button onclick="addToCart('Produto local', 150)">Adicionar ao Carrinho</button>
+        </div>
+
+        <div class="product">
+            <h3>Vegetais</h3>
+            <img src="https://static.significados.com.br/foto/vegetais-fb.jpg?class=ogImageRectangle">
+            <p>R$ 150</p>
+            <button onclick="addToCart('Vegetais', 150)">Adicionar ao Carrinho</button>
+        </div>
+        <!-- Adicione mais produtos conforme necessário -->
+    </div>
+
+    <h1>Seu Carrinho</h1>
+    <div id="cart"></div>
+
+    <div>
+        <label for="address">Endereço de Entrega:</label><br>
+        <input type="text" id="address" name="address"><br><br>
+        <button onclick="checkout()">Concluir Pedido</button>
+    </div>
+
+    <div id="total">
+        <h3>Total: R$ 0</h3>
+    </div>
+
+    <h2>Opções de Pagamento</h2>
+    <select id="payment">
+        <option value="credito">Cartão de Crédito</option>
+        <option value="debito">Cartão de Débito</option>
+        <option value="paypal">PayPal</option>
+        <option value="paypal">Pix</option>
+        <!-- Adicione mais opções de pagamento conforme necessário -->
+    </select>
+
+    <script>
+        let cart = [];
+        let total = 0;
+
+        function addToCart(item, price) {
+            let existingItem = cart.find(i => i.name === item);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ name: item, quantity: 1, price: price });
+            }
+            total += price;
+            displayCart();
+        }
+
+        function displayCart() {
+            let cartElement = document.getElementById('cart');
+            cartElement.innerHTML = '<h3>Itens no Carrinho</h3>';
+            cart.forEach(function(item) {
+                cartElement.innerHTML += '<div>' + item.name + ' - Quantidade: ' + item.quantity +
+                    ' - <button onclick="removeItem(\'' + item.name + '\', ' + item.price + ')">Remover</button></div>';
+            });
+
+            displayTotal();
+        }
+
+        function displayTotal() {
+            let totalElement = document.getElementById('total');
+            totalElement.innerHTML = '<h3>Total: R$ ' + total + '</h3>';
+        }
+
+        function removeItem(item, price) {
+            let existingItem = cart.find(i => i.name === item);
+            if (existingItem) {
+                if (existingItem.quantity > 1) {
+                    existingItem.quantity--;
+                } else {
+                    cart = cart.filter(i => i.name !== item);
+                }
+                total -= price;
+                displayCart();
+            }
+        }
+
+        function clearCart() {
+            cart = [];
+            total = 0;
+            displayCart();
+        }
+
+        function checkout() {
+            if (cart.length > 0) {
+                const address = document.getElementById('address').value;
+                if (address === "") {
+                    alert('Por favor, insira o endereco de entrega antes de concluir o pedido.');
+                } else {
+                    alert('Seu pedido esta em andamento para o endereco: ' + address);
+                    clearCart();
+                    window.location.href = 'index.html';
+                }
+            } else {
+                alert('Seu carrinho esta vazio. Adicione itens antes de fazer o checkout.');
+            }
+        }
+    </script>
+</body>
+
+</html>
